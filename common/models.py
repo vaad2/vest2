@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from django.core.urlresolvers import resolve
 from django.db import models
 
@@ -284,9 +285,9 @@ class BaseAbstractTree(AbstractUserSiteDefaultModel):
 
             self.level = self.parent.level + 1
             if not self.pk:
-                max_pos = self.__class__.site_objects.filter(parent=self.parent).aggregate(Max('order'))['pos__max']
+                max_pos = self.__class__.site_objects.filter(parent=self.parent).aggregate(Max('order'))['order__max']
                 if not max_pos is None:
-                    self.pos = max_pos + 1
+                    self.order = max_pos + 1
         else:
             self.level = 0
 
@@ -297,7 +298,7 @@ class BaseAbstractTree(AbstractUserSiteDefaultModel):
     @classmethod
     def tree_get(cls, active_pk=None, params={}):
         queryset = cls.site_objects.filter(**params).order_by('-level', 'order')
-        dic = SortedDict()
+        dic = OrderedDict()
         for item in queryset:
             if item.pk == active_pk:
                 item.active = True
