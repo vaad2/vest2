@@ -1,3 +1,4 @@
+from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import resolve
 from django.http import Http404, HttpResponse
 from django.shortcuts import redirect
@@ -110,7 +111,7 @@ class BaseMixin(View):
 
 
 class AuthMixin(BaseMixin):
-    no_access_url = '/'
+    no_access_url = None
 
     def _on_access_granted(self, request, *args, **kwargs):
         pass
@@ -118,6 +119,9 @@ class AuthMixin(BaseMixin):
     def permission_check(self, request, *args, **kwargs):
         # if not (request.user.is_authenticated() and request.user.is_active and request.user.is_approved):
         if not (request.user.is_authenticated() and request.user.is_active):
+            if self.no_access_url is None:
+                raise PermissionDenied
+
             return redirect(self.no_access_url)
 
         self._on_access_granted(request, *args, **kwargs)
