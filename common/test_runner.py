@@ -15,3 +15,4 @@ class VTSkipDBRunner(DiscoverRunner):
         """
         Skip destroys all the non-mirror databases.
         """
+        pass
