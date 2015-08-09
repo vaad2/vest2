@@ -312,3 +312,6 @@ def ex_find_template(name, exclude=[], dirs=None):
 
     return get_template(name)
 
+
+# language prefix
+vt_lang_prefix = lambda url: r'^([A-Za-z]{2}/)?%s' % url
