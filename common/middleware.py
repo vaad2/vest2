@@ -15,8 +15,8 @@ class MiddlewareView(object):
             request.curr_view = view_func.__name__
             request.curr_view_url = request.path
 
-            request.vt_reolve = resolve(request.path)
-            namespace = request.vt_reolve.namespace
+            request.vt_resolve = resolve(request.path)
+            namespace = request.vt_resolve.namespace
 
             request.curr_view_full = '%s:%s' % (namespace, request.curr_view)
             request.curr_view_full_ul = '%s__%s' % (namespace, request.curr_view)
