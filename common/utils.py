@@ -293,7 +293,7 @@ def slugify_ru(in_str):
     try:
         return slugify(translit(in_str, reversed=True))
     except Exception, e:
-        return slugify(unicode(in_str), reversed=True)
+        return slugify(translit(unicode(in_str), reversed=True))
 
 
 def ujson_response(x):
