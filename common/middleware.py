@@ -8,7 +8,7 @@ import re
 from common.thread_locals import get_current_site
 from thread_locals import set_thread_var
 
-
+# DEPRECATED
 class MiddlewareView(object):
     def process_view(self, request, view_func, view_args, view_kwargs):
         try:
@@ -24,6 +24,27 @@ class MiddlewareView(object):
         #            request.curr_view_name = resolve_to_name(request.path)
         except BaseException, e:
             pass
+
+class MiddlewareInfoView(object):
+    def process_view(self, request, view_func, view_args, view_kwargs):
+        try:
+            resolver = resolve(request.path)
+
+            request.vt_view = {
+                'resolver' : resolver,
+                'view_func_name' : view_func.__name__,
+                'path' : request.path,
+                'namespace' : resolver.namespace,
+                'view_name' : resolver.view_name,
+                'short_view_name' : resolver.view_name.split(':')[-1],
+
+                'view_func' : view_func,
+                'view_args' : view_args,
+                'view_kwargs' : view_kwargs,
+
+            }
+        except BaseException, e:
+            request.vt_view = {}
 
 
 class MiddlewareMultipleProxy(object):
