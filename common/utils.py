@@ -6,7 +6,8 @@ import urlparse
 import sys
 import re
 import codecs
-from transliterate import translit
+import transliterate
+# from transliterate import translit
 
 from datetime import datetime
 from uuid import uuid4
@@ -291,9 +292,9 @@ def lang_get():
 
 def slugify_ru(in_str):
     try:
-        return slugify(translit(in_str, reversed=True))
+        return slugify(transliterate.translit(in_str, reversed=True))
     except Exception, e:
-        return slugify(translit(unicode(in_str), reversed=True))
+        return slugify(transliterate.translit(unicode(in_str), reversed=True))
 
 
 def ujson_response(x):
