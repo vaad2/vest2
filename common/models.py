@@ -292,7 +292,7 @@ class BaseAbstractTree(AbstractUserSiteDefaultModel):
             self.level = 0
 
         super(BaseAbstractTree, self).save(**kwargs)
-        self.__class__.path_update()
+        # self.__class__.path_update()
 
 
     @classmethod
