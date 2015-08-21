@@ -6,7 +6,6 @@ from django.contrib.sites.models import Site
 from django.http import Http404
 from django.shortcuts import redirect
 from django.template.response import TemplateResponse
-from django.utils.datastructures import SortedDict
 from django.utils.translation import ugettext_lazy as _, get_language
 from django.views.generic import View
 from thread_locals import get_current_request, get_current_user, get_current_site
@@ -308,7 +307,7 @@ class BaseAbstractTree(AbstractUserSiteDefaultModel):
                 parent_pk = item.parent.pk
 
             if not parent_pk in dic:
-                dic[parent_pk] = SortedDict()
+                dic[parent_pk] = OrderedDict()
             dic[parent_pk][item.pk] = item
 
             if item.pk in dic:
