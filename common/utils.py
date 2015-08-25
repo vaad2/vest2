@@ -278,8 +278,9 @@ class UploadPath(object):
         else:
             path = self.base_path
 
-        if not os.path.exists(path):
-            os.makedirs(path)
+        full_path = os.path.join(settings.MEDIA_ROOT, path)
+        if not os.path.exists(full_path):
+            os.makedirs(full_path)
 
         path = os.path.join(path, name)
 

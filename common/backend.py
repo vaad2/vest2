@@ -36,6 +36,11 @@ class ExTemplate(Template):
 class ExJinja2(Jinja2):
     def __init__(self, params):
         ex_options = params.pop('EX_OPTIONS').copy()
+        if 'DIRS' in ex_options:
+            # FOR PYCHARM FIX
+            params['DIRS'] = ex_options['DIRS']
+            del ex_options['DIRS']
+
         self.app_dirname = True
         super(ExJinja2, self).__init__(params)
         # only for
