@@ -73,7 +73,7 @@ class BaseMixin(View):
 
         if 'cmd' in request.REQUESTS:
             try:
-                handler = getattr(self, 'cmd_%s' % request.REQUESTS['cmd'].lower())
+                handler = getattr(self, 'cmd_%s' % request.REQUESTS['cmd'][0].lower())
                 result = handler(request, *args, **kwargs)
             except Exception, e:
                 if request.is_ajax():
