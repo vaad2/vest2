@@ -6,8 +6,6 @@ import urlparse
 import sys
 import re
 import codecs
-import transliterate
-# from transliterate import translit
 
 from datetime import datetime
 from uuid import uuid4
@@ -15,17 +13,18 @@ from copy import deepcopy
 from importlib import import_module
 
 import ujson
+import transliterate
 
+from django.utils.text import slugify
 from django.contrib import auth
 from django.core.files.base import ContentFile
 from django.apps import apps
 from django.http import HttpResponse
-from django.template.defaultfilters import slugify
 from django.template.loader import get_template
-from django.utils.datastructures import SortedDict
 from django.utils.deconstruct import deconstructible
 from django.utils.translation import get_language
 from django.conf import settings
+
 
 def file_put_contents(filename, data, utf=False):
     f = codecs.open(filename, "w", "utf-8-sig") if utf else open(filename, 'w')
@@ -162,6 +161,7 @@ def camel_to_underline(name):
     s1 = first_cap_re.sub(r'\1_\2', name)
     return all_cap_re.sub(r'\1_\2', s1).lower()
 
+
 '''
 
  <?xml version="1.0" encoding="UTF-8"?>
@@ -178,6 +178,8 @@ def camel_to_underline(name):
 </urlset>
 
 '''
+
+
 class SiteMapGenerator(object):
     def __init__(self):
         self.file = None
@@ -241,6 +243,7 @@ def dict_merge(target, *args):
             target[k] = deepcopy(v)
     return target
 
+
 # request.FILES['file']
 # path = 'users/1' for example
 from django.core.files.storage import default_storage
@@ -269,13 +272,11 @@ class UploadPath(object):
             name, ext = os.path.splitext(file_name)
             name = '%s%s' % (str(uuid4()), ext)
 
-
         if self.field_name:
             field = getattr(instance, self.field_name)
             path = os.path.join(self.base_path, field.slug if hasattr(field, 'slug') else unicode(field.pk))
         else:
             path = self.base_path
-
 
         if not os.path.exists(path):
             os.makedirs(path)
@@ -290,16 +291,15 @@ def lang_get():
     return get_language().split('-')[0]
 
 
-def slugify_ru(in_str):
+def slugify_ru(in_str, language_code=None):
     try:
-        return slugify(transliterate.translit(in_str, reversed=True))
+        return slugify(transliterate.translit(in_str, language_code=language_code, reversed=True))
     except Exception, e:
-        return slugify(transliterate.translit(unicode(in_str), reversed=True))
+        return slugify(transliterate.translit(unicode(in_str), language_code=language_code, reversed=True))
 
 
 def ujson_response(x):
     return HttpResponse(ujson.dumps(x), content_type='application/json; charset=UTF-8')
-
 
 
 def ex_find_template(name, exclude=[], dirs=None):

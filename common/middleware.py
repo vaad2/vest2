@@ -1,12 +1,16 @@
 import urllib
+import re
+
 from django import http
 from django.core.urlresolvers import reverse, resolve
 from django.utils import datastructures
 from django.middleware.locale import LocaleMiddleware
 from django.utils import translation
-import re
+from django.conf import settings
+
 from common.thread_locals import get_current_site
 from thread_locals import set_thread_var
+
 
 # DEPRECATED
 class MiddlewareView(object):
@@ -25,22 +29,23 @@ class MiddlewareView(object):
         except BaseException, e:
             pass
 
+
 class MiddlewareInfoView(object):
     def process_view(self, request, view_func, view_args, view_kwargs):
         try:
             resolver = resolve(request.path)
 
             request.vt_view = {
-                'resolver' : resolver,
-                'view_func_name' : view_func.__name__,
-                'path' : request.path,
-                'namespace' : resolver.namespace,
-                'view_name' : resolver.view_name,
-                'short_view_name' : resolver.view_name.split(':')[-1],
+                'resolver': resolver,
+                'view_func_name': view_func.__name__,
+                'path': request.path,
+                'namespace': resolver.namespace,
+                'view_name': resolver.view_name,
+                'short_view_name': resolver.view_name.split(':')[-1],
 
-                'view_func' : view_func,
-                'view_args' : view_args,
-                'view_kwargs' : view_kwargs,
+                'view_func': view_func,
+                'view_args': view_args,
+                'view_kwargs': view_kwargs,
 
             }
         except BaseException, e:
@@ -104,11 +109,11 @@ class MiddlewareFilterPersist(object):
             key = 'popup' + path.replace('/', '_')
 
         if path == referrer:  # We are in same page as before
-            if query_string == '':  #Filter is empty, delete it
+            if query_string == '':  # Filter is empty, delete it
                 if session.get(key, False):
                     del session[key]
                 return None
-            #            request.session[key] = query_string
+            # request.session[key] = query_string
             request.session[key] = request.GET.copy()
             request.session.modified = True
         else:  # We are are coming from another page, restore filter if available
@@ -123,7 +128,7 @@ class MiddlewareFilterPersist(object):
                     return http.HttpResponseRedirect(redirect_to)
                 except:
                     pass
-                #                query_string=request.session.get(key)
+                    #                query_string=request.session.get(key)
 
         return None
 
@@ -164,7 +169,18 @@ class MiddlewareSwitchLocale(LocaleMiddleware):
         request.LANGUAGE_CODE = language
 
 
-#for django admin
+class MiddlewareLocale(object):
+    def process_request(self, request):
+        sr = re.search('^/([A-Za-z]{2})/', request.path)
+        lang_dc = dict(item for item in settings.LANGUAGES)
+
+        request.vt_lang = sr.group(1) if sr and sr.group(1) in lang_dc else settings.LANGUAGE_CODE
+
+        translation.activate(request.vt_lang)
+
+
+# for django admin
+# DEPRECATED!!!
 class MiddlewareFilterPersist(object):
     def process_request(self, request):
 
@@ -183,7 +199,7 @@ class MiddlewareFilterPersist(object):
         query_string = request.META['QUERY_STRING']
         session = request.session
 
-        if session.get('redirected', False):  #so that we dont loop once redirected
+        if session.get('redirected', False):  # so that we dont loop once redirected
             del session['redirected']
             return None
 
@@ -193,15 +209,15 @@ class MiddlewareFilterPersist(object):
         if popup:
             key = 'popup' + path.replace('/', '_')
 
-        if path == referrer:  #We are in same page as before
-            if query_string == '':  #Filter is empty, delete it
+        if path == referrer:  # We are in same page as before
+            if query_string == '':  # Filter is empty, delete it
                 if session.get(key, False):
                     del session[key]
                 return None
-            #            request.session[key] = query_string
+            # request.session[key] = query_string
             request.session[key] = request.GET.copy()
             request.session.modified = True
-        else:  #We are are coming from another page, restore filter if available
+        else:  # We are are coming from another page, restore filter if available
             if session.get(key, False):
                 #                urllib.urlencode
                 try:
@@ -226,9 +242,9 @@ class MiddlewareSimplePage(object):
 
             url = re.sub(r'/+', '/', '/%s/' % request.path_info.strip('/'), re.IGNORECASE)
             sps = []
-            #check_re
+            # check_re
 
-            #check if this seller subdomain
+            # check if this seller subdomain
             qset = cls.site_objects.filter(url=url, state=True)
 
             for idx, sp in enumerate(qset):
@@ -238,6 +254,7 @@ class MiddlewareSimplePage(object):
                 request.simple_page = sps
         except cls.DoesNotExist:
             request.simple_page = None
+
 
 class MiddlewareRequest(object):
     def process_request(self, request):
