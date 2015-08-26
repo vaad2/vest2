@@ -38,7 +38,7 @@ class ExClearableFileInput(ClearableFileInput):
             }
         template = u'%(input)s or url: %(input_img_url)s'
         substitutions['input'] = super(ClearableFileInput, self).render(name, value, attrs)
-        substitutions['input_img_url'] = widgets.TextInput(attrs = {'style' : 'width:320px'}).render(conditional_escape(self.image_url_name(name)), '')
+        substitutions['input_img_url'] = widgets.TextInput().render(conditional_escape(self.image_url_name(name)), '')
 
         if value and hasattr(value, "url"):
             template = self.template_with_initial
