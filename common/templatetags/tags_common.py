@@ -179,3 +179,9 @@ def vt_tree(context, *args, **kwargs):
     # })
     #
 
+
+
+@library.filter
+def vt_verbose_name(object, is_plural=False):
+    model = type(object)
+    return model._meta.verbose_name_plural.title() if is_plural else model._meta.verbose_name.title()
