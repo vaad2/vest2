@@ -180,6 +180,9 @@ def vt_tree(context, *args, **kwargs):
     #
 
 
+@library.filter
+def vt_iif(expr, result_true, result_false=''):
+    return result_true if expr else result_false
 
 @library.filter
 def vt_verbose_name(object, is_plural=False):
