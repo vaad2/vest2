@@ -1,4 +1,6 @@
 from collections import OrderedDict
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import resolve
 from django.db import models
 
@@ -119,6 +121,15 @@ class AbstractUserSiteDefaultModel(AbstractUserDefaultModel):
     class Meta:
         abstract = True
         ordering = ['order']
+
+class AbstractContentType(models.Model):
+    content_type = models.ForeignKey(ContentType)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey('content_type', 'object_id')
+
+    class Meta:
+        abstract = True
+
 
 
 class SiteTheme(AbstractUserSiteDefaultModel):
