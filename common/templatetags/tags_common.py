@@ -181,6 +181,7 @@ def vt_tree(context, *args, **kwargs):
 
 
 @library.filter
+@library.global_function
 def vt_iif(expr, result_true, result_false=''):
     return result_true if expr else result_false
 
