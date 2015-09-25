@@ -1,7 +1,9 @@
 import re
 
 from django.contrib.staticfiles.templatetags.staticfiles import static
-from django.db.models.loading import get_model
+from django.apps import apps
+
+
 from django.utils.safestring import mark_safe
 from django_jinja import library
 
@@ -39,7 +41,7 @@ def vt_tree(context, *args, **kwargs):
 
     url = re.sub(r'/+', '/', '/%s/' % request.path_info.strip('/'), re.IGNORECASE)
     query = kwargs.get('query', {})
-    model = get_model(kwargs['model'])
+    model = apps.get_model(kwargs['model'])
 
     queryset = model.objects.filter(**query)
 
