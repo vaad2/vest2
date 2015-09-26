@@ -1,3 +1,5 @@
+import six
+
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import resolve
 from django.http import Http404, HttpResponse
@@ -73,7 +75,14 @@ class BaseMixin(View):
 
         if 'cmd' in request.REQUESTS:
             try:
-                handler = getattr(self, 'cmd_%s' % request.REQUESTS['cmd'][0].lower())
+                cmd = request.REQUESTS['cmd']
+
+                if not isinstance(cmd, six.string_types):
+                    cmd = request.REQUESTS['cmd'][0]
+
+                cmd = cmd.lower()
+
+                handler = getattr(self, 'cmd_%s' % cmd)
                 result = handler(request, *args, **kwargs)
             except Exception, e:
                 if request.is_ajax():

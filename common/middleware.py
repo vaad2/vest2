@@ -262,3 +262,7 @@ class MiddlewareRequest(object):
         request.REQUESTS = {}
         request.REQUESTS.update(request.POST)
         request.REQUESTS.update(request.GET)
+
+        for key, val in request.REQUESTS.iteritems():
+            if isinstance(val, list) and len(val) == 1:
+                request.REQUESTS[key] = val[0]
